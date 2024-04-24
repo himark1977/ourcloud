@@ -1,0 +1,6 @@
+data/com.evokzh.ourcloud.desktop.in
+data/com.evokzh.ourcloud.metainfo.xml.in
+data/com.evokzh.ourcloud.gschema.xml
+src/main.py
+src/window.py
+src/window.ui

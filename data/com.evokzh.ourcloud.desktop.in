@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ourcloud
+Exec=ourcloud
+Icon=com.evokzh.ourcloud
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
