@@ -24,7 +24,5 @@ from gi.repository import Gtk
 class OurcloudPreferences(Adw.ApplicationWindow):
     __gtype_name__ = 'OurcloudPreferences'
 
-    label = Gtk.Template.Child()
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
