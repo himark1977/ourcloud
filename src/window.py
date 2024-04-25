@@ -20,7 +20,7 @@
 from gi.repository import Adw
 from gi.repository import Gtk
 
-@Gtk.Template(resource_path='/com/evokzh/ourcloud/window.ui')
+@Gtk.Template(resource_path='/com/evokzh/ourcloud/gtk/window.ui')
 class OurcloudWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'OurcloudWindow'
 
