@@ -1,13 +1,34 @@
 # ourcloud
 
-iCloud but for Linux, this is core just for auth.
-For most of the features you will need a cloud server.
+iCloud but for Linux.
+
+For all of the features you will need server being open.
+
 But the hearth is right there.
 
+*Disclaimer:* This is not the Apple iCloud that is working on linux, this is an open source interpretation of a service cloud, let's say it iCloud.
+Please be careful this is highly broken.
+Nothing is encrypted (yet) use on your own.
+This app, now, is mostly for demonstration purpose.
+
+
+Master branch: app using Builder-IDE (Gnome App).
+Inazaki branch: app using kirigami (KDE App)
+Dante branch: app using qtcreator (Qt App).
+Miscellaneous branch: app using, for research, all king of technologies.
+
+
 ## Build
-1. Download flatpak Gnome Builder [builder.gnome.org]
-2. Open the project
+1. Download Gnome Builder. [https://apps.gnome.org/ro/Builder/]
+2. Open the project.
 3. Build.
+4. Open server file from server folder.
+
+```
+$ ./server/server
+```
+
+5. Open the app.
 
 ## Configure
 ### Create subprojects
@@ -17,7 +38,7 @@ mkdir -p subprojects
 ```
 
 ### Config subprojects
-Blueprint config[https://jwestman.pages.gitlab.gnome.org/blueprint-compiler/setup.html]
+Blueprint config [https://jwestman.pages.gitlab.gnome.org/blueprint-compiler/setup.html]
 
 ```
 cat <<EOT >> subprojects/blueprint-compiler.wrap
@@ -96,6 +117,7 @@ ourcloud_sources = [
 ```
 
 ### Edit com.evokzh.ourcloud.json, add before meson
+pip config 
 
 ```
  {
