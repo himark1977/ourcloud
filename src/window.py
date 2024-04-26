@@ -19,10 +19,27 @@
 
 from gi.repository import Adw
 from gi.repository import Gtk
+import socket
 
 @Gtk.Template(resource_path='/com/evokzh/ourcloud/gtk/window.ui')
 class OurcloudWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'OurcloudWindow'
 
-    def __init__(self, **kwargs):
+
+    main_hello_label = Gtk.Template.Child()
+    entry_username = Gtk.Template.Child()
+    entry_password = Gtk.Template.Child()
+    login_button = Gtk.Template.Child()
+
+    def __init__(self, send_message, **kwargs):
+        self.send_message = send_message
         super().__init__(**kwargs)
+        self.login_button.connect("clicked", self.on_login_button_clicked)
+    
+    # get username buffer and print on the console
+    def on_login_button_clicked(self, button):
+        self.username = str(self.entry_username.get_text())
+        self.password = str(self.entry_password.get_text())
+        self.send_message(f'login:{self.username},{self.password}')
+        self.main_hello_label.set_text(self.send_message(f'login:{self.username},{self.password}'))
+

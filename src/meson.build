@@ -51,6 +51,7 @@ configure_file(
   install_mode: 'r-xr-xr-x'
 )
 
+# TODO: Add here python files
 ourcloud_sources = [
   '__init__.py',
   'main.py',

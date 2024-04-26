@@ -33,7 +33,7 @@
           ]
         },
         "build-commands": [
-            "pip3 install --prefix=/app requests urllib3 chardet idna certifi"
+            "pip3 install --prefix=/app urllib3 chardet idna certifi"
         ]
 
        },

@@ -19,7 +19,7 @@
 
 import sys
 import gi
-import requests
+import socket
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -32,12 +32,22 @@ from .preferences import OurcloudPreferences
 class OurcloudApplication(Adw.Application):
     """The main application singleton class."""
 
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Get the server IP and port
+    server_ip = 'localhost'
+    server_port = 12345
+
+    # Connect to the server
+    client_socket.connect((server_ip, server_port))
+
     def __init__(self):
         super().__init__(application_id='com.evokzh.ourcloud',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
+        
 
     def do_activate(self):
         """Called when the application is activated.
@@ -47,12 +57,11 @@ class OurcloudApplication(Adw.Application):
         """
         win = self.props.active_window
         if not win:
-            win = OurcloudWindow(application=self)
+            win = OurcloudWindow(application=self, send_message=self.send_message)
         win.present()
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
-        print(requests.get('https://google.com').text)
         about = Adw.AboutWindow(transient_for=self.props.active_window,
                                 application_name='ourcloud',
                                 application_icon='com.evokzh.ourcloud',
@@ -69,6 +78,12 @@ class OurcloudApplication(Adw.Application):
         preferences = OurcloudPreferences(application=self)
         preferences.present()
 
+    def send_message(self, message):
+        """Send a message to the server."""
+        self.client_socket.sendall(message.encode())
+        response = self.client_socket.recv(1024)
+        return response.decode()
+
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.
 
@@ -83,6 +98,7 @@ class OurcloudApplication(Adw.Application):
         self.add_action(action)
         if shortcuts:
             self.set_accels_for_action(f"app.{name}", shortcuts)
+
 
 
 def main(version):

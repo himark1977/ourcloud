@@ -20,11 +20,38 @@
           </object>
         </child>
         <property name="content">
-          <object class="GtkLabel" id="label">
-            <property name="label">Hello, World!</property>
-            <style>
-              <class name="title-1"/>
-            </style>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+             <property name="spacing">20</property>
+        
+            <child>
+              <object class="GtkLabel" id="main_hello_label">
+                <property name="label">Hello, World!</property>
+                <style>
+                  <class name="title-2"/>
+                </style>
+              </object>
+            </child>
+        
+            <child>
+              <object class="GtkEntry" id="entry_username">
+                <property name="placeholder-text">Enter your username</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkEntry" id="entry_password">
+                <property name="placeholder-text">Enter your password</property>
+                <property name="visibility">False</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="login_button">
+                <property name="label">Login</property>
+              </object>
+            </child>
+
           </object>
         </property>
       </object>
