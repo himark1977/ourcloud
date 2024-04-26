@@ -32,7 +32,13 @@
                 </style>
               </object>
             </child>
-        
+
+            <child>
+              <object class="GtkLabel" id="main_desc_label">
+                <property name="label">Please enter your username and password to login</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
             <child>
               <object class="GtkEntry" id="entry_username">
                 <property name="placeholder-text">Enter your username</property>
@@ -49,6 +55,12 @@
             <child>
               <object class="GtkButton" id="login_button">
                 <property name="label">Login</property>
+              </object>
+            </child>
+            
+               <child>
+              <object class="GtkButton" id="reg_button">
+                <property name="label">Register</property>
               </object>
             </child>
 

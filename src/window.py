@@ -30,16 +30,26 @@ class OurcloudWindow(Adw.ApplicationWindow):
     entry_username = Gtk.Template.Child()
     entry_password = Gtk.Template.Child()
     login_button = Gtk.Template.Child()
+    reg_button = Gtk.Template.Child()
 
     def __init__(self, send_message, **kwargs):
         self.send_message = send_message
         super().__init__(**kwargs)
         self.login_button.connect("clicked", self.on_login_button_clicked)
+        self.reg_button.connect("clicked", self.on_reg_button_clicked)
     
     # get username buffer and print on the console
     def on_login_button_clicked(self, button):
         self.username = str(self.entry_username.get_text())
         self.password = str(self.entry_password.get_text())
-        self.send_message(f'login:{self.username},{self.password}')
         self.main_hello_label.set_text(self.send_message(f'login:{self.username},{self.password}'))
+        if(self.main_hello_label.get_text() != 'Invalid username or password.'):
+            self.entry_password.hide()
+            self.entry_username.hide()
+            self.login_button.hide()
+            self.reg_button.hide()
 
+    def on_reg_button_clicked(self, button):
+        self.username = str(self.entry_username.get_text())
+        self.password = str(self.entry_password.get_text())
+        self.main_hello_label.set_text(self.send_message(f'register:{self.username},{self.password}'))
