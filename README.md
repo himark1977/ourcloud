@@ -5,8 +5,11 @@ For most of the features you will need a cloud server.
 But the hearth is right there.
 
 ## Build
-Download flatpak Gnome Builder [builder.gnome.org]
+1. Download flatpak Gnome Builder [builder.gnome.org]
+2. Open the project
+3. Build.
 
+## Configure
 ### Create subprojects
 
 ```
