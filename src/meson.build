@@ -56,7 +56,8 @@ ourcloud_sources = [
   '__init__.py',
   'main.py',
   'window.py',
-  'preferences.py'
+  'preferences.py',
+  'messages.py'
 ]
 
 install_data(ourcloud_sources, install_dir: moduledir)

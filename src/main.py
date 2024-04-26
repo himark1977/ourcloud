@@ -27,6 +27,7 @@ gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gio, Adw
 from .window import OurcloudWindow
 from .preferences import OurcloudPreferences
+from .messages import OurcloudMessages
 
 
 class OurcloudApplication(Adw.Application):
@@ -47,6 +48,7 @@ class OurcloudApplication(Adw.Application):
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
+        self.create_action('messages', self.on_messages_action)
         
 
     def do_activate(self):
@@ -77,6 +79,11 @@ class OurcloudApplication(Adw.Application):
         print('app.preferences action activated')
         preferences = OurcloudPreferences(application=self)
         preferences.present()
+
+    def on_messages_action(self, widget, _):
+        """Callback for the app.messages action."""
+        messages = OurcloudMessages(application=self, send_message=self.send_message)
+        messages.present()
 
     def send_message(self, message):
         """Send a message to the server."""

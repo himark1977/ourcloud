@@ -19,25 +19,27 @@
 
 from gi.repository import Adw
 from gi.repository import Gtk
+from .messages import OurcloudMessages
 import socket
 
 @Gtk.Template(resource_path='/com/evokzh/ourcloud/gtk/window.ui')
 class OurcloudWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'OurcloudWindow'
 
-
     main_hello_label = Gtk.Template.Child()
     entry_username = Gtk.Template.Child()
     entry_password = Gtk.Template.Child()
     login_button = Gtk.Template.Child()
     reg_button = Gtk.Template.Child()
+    menu_btn = Gtk.Template.Child()
+    main_desc_label = Gtk.Template.Child()
 
     def __init__(self, send_message, **kwargs):
         self.send_message = send_message
         super().__init__(**kwargs)
         self.login_button.connect("clicked", self.on_login_button_clicked)
         self.reg_button.connect("clicked", self.on_reg_button_clicked)
-    
+
     # get username buffer and print on the console
     def on_login_button_clicked(self, button):
         self.username = str(self.entry_username.get_text())
@@ -48,6 +50,8 @@ class OurcloudWindow(Adw.ApplicationWindow):
             self.entry_username.hide()
             self.login_button.hide()
             self.reg_button.hide()
+            self.menu_btn.show()
+            self.main_desc_label.set_text('Welcome to Ourcloud!\n Please select an option from the menu.')
 
     def on_reg_button_clicked(self, button):
         self.username = str(self.entry_username.get_text())
