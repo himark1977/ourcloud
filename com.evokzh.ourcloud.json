@@ -23,6 +23,22 @@
         "*.a"
     ],
     "modules" : [
+
+          {
+        "name": "pip",
+        "buildsystem": "simple",
+        "build-options": {
+          "build-args": [
+            "--share=network"
+          ]
+        },
+        "build-commands": [
+            "pip3 install --prefix=/app requests urllib3 chardet idna certifi"
+        ]
+
+       },
+
+
         {
             "name" : "ourcloud",
             "builddir" : true,
@@ -30,7 +46,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/evokzh/Projects"
+                    "url" : "https://github.com/himark1977/ourcloud.git"
                 }
             ]
         }

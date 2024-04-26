@@ -19,6 +19,7 @@
 
 import sys
 import gi
+import requests
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -51,6 +52,7 @@ class OurcloudApplication(Adw.Application):
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
+        print(requests.get('https://google.com').text)
         about = Adw.AboutWindow(transient_for=self.props.active_window,
                                 application_name='ourcloud',
                                 application_icon='com.evokzh.ourcloud',

@@ -1,0 +1,195 @@
+#! /usr/bin/env python3
+
+import socket
+import sqlite3
+import time
+
+# Create a socket object
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Get the online ip address of the server
+host = "localhost"
+port = 12345
+
+# Bind to the port
+server_socket.bind((host, port))
+
+# Listen for incoming connections
+server_socket.listen(5)
+
+print('Server listening on {}:{}'.format(host, port))
+
+# Connect to SQLite database
+conn = sqlite3.connect('database.db')
+cursor = conn.cursor()
+
+# Create a table to store users if not exists
+cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                  (username TEXT PRIMARY KEY, password TEXT)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS messages
+                  (id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS friends
+                    (id INTEGER PRIMARY KEY, user1 TEXT, user2 TEXT)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS groups
+                    (id INTEGER PRIMARY KEY, name TEXT)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS group_members
+                    (id INTEGER PRIMARY KEY, group_id INTEGER, user TEXT)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS group_messages
+                (id INTEGER PRIMARY KEY, group_id INTEGER, sender TEXT, message TEXT)''')
+
+conn.commit()
+
+# Function to handle client connections
+def handle_client(client_socket):
+    while True:
+        data = client_socket.recv(1024).decode()
+        if not data:
+            break
+
+        # Split received data into command and payload
+        command, payload = data.split(':', 1)
+
+        # Register a new user
+        if command == 'register':
+            username, password = payload.split(',')
+            try:
+                cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                conn.commit()
+                client_socket.sendall(b'Registration successful.')
+            except sqlite3.IntegrityError:
+                client_socket.sendall(b'Username already exists. Please choose another one.')
+
+        # Login
+        elif command == 'login':
+            username, password = payload.split(',')
+            cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+            if cursor.fetchone():
+                client_socket.sendall(b'Welcome, ' + username.encode())
+            else:
+                client_socket.sendall(b'Invalid username or password.')
+
+        # Print username (for testing)
+        elif command == 'write_message':
+            sender, receiver, message = payload.split(',')
+            cursor.execute("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)", (sender, receiver, message))
+            conn.commit()
+            client_socket.sendall(b'Message sent.')
+
+        # Read messages
+        elif command == 'read_messages':
+            username = payload
+            cursor.execute("SELECT * FROM messages WHERE receiver=?", (username,))
+            messages = cursor.fetchall()
+            for message in messages:
+                client_socket.sendall(f'From: {message[1]}\nMessage: {message[3]}\n'.encode())
+
+        # Delete messages
+        elif command == 'delete_messages':
+            username = payload
+            cursor.execute("DELETE FROM messages WHERE receiver=?", (username,))
+            conn.commit()
+            client_socket.sendall(b'Messages deleted.')
+        
+        # For moment only one user can be friend of another user
+        # Add friend
+        elif command == 'add_friend':
+            user1, user2 = payload.split(',')
+            if user1 == user2:
+                client_socket.sendall(b'You cannot add yourself as a friend.')
+                continue
+            # Check if the users are already friends
+            cursor.execute("SELECT * FROM friends WHERE user1=? AND user2=?", (user1, user2))
+            if cursor.fetchone():
+                client_socket.sendall(b'You are already friends.')
+                continue
+            # Add the friend
+            cursor.execute("INSERT INTO friends (user1, user2) VALUES (?, ?)", (user1, user2))
+            conn.commit()
+            client_socket.sendall(b'Friend added.')
+
+        # Remove friend
+        # not working yet idk why
+        elif command == 'remove_friend':
+            user1, user2 = payload.split(',')
+            cursor.execute("DELETE FROM friends WHERE user1=? AND user2=?", (user1, user2))
+            conn.commit()
+            client_socket.sendall(b'Friend removed.')
+
+        # List friends
+        elif command == 'list_friends':
+            username = payload
+            # Friends where user1 is the current user
+            cursor.execute("SELECT * FROM friends WHERE user1=?", (username,))
+            friends = cursor.fetchall()
+            for friend in friends:
+                client_socket.sendall(f'{friend[2]}\n'.encode())
+        
+        # not working yet idk why
+        # Create group
+        elif command == 'create_group':
+            name = payload
+            while True:
+                try:
+                    cursor.execute("INSERT INTO groups (name) VALUES (?)", (name,))
+                    conn.commit()
+                    client_socket.sendall(b'Group created id is: ' + str(cursor.lastrowid).encode())
+                    break
+                except sqlite3.OperationalError:
+                    time.sleep(0.1)  # Wait for a short delay before retrying
+
+        # Add group member
+        elif command == 'add_group_member':
+            group_id, user = payload.split(',')
+            cursor.execute("INSERT INTO group_members (group_id, user) VALUES (?, ?)", (group_id, user))
+            conn.commit()
+            client_socket.sendall(b'Member added.')
+
+        # Remove group member
+        elif command == 'remove_group_member':
+            group_id, user = payload.split(',')
+            while True:
+                try:
+                    cursor.execute("DELETE FROM group_members WHERE group_id=? AND user=?", (group_id, user))
+                    conn.commit()
+                    client_socket.sendall(b'Member removed.')
+                    break
+                except sqlite3.OperationalError:
+                    time.sleep(0.1)  # Wait for a short delay before retrying
+
+        # List group members
+        elif command == 'list_group_members':
+            group_id = payload
+            cursor.execute("SELECT * FROM group_members WHERE group_id=?", (group_id,))
+            members = cursor.fetchall()
+            for member in members:
+                client_socket.sendall(f'{member[2]}\n'.encode())
+
+        # Send group message
+        elif command == 'send_group_message':
+            group_id, sender, message = payload.split(',')
+            cursor.execute("INSERT INTO group_messages (group_id, sender, message) VALUES (?, ?, ?)", (group_id, sender, message))
+            conn.commit()
+            client_socket.sendall(b'Message sent.')
+
+        # Read group messages
+        elif command == 'read_group_messages':
+            group_id = payload
+            cursor.execute("SELECT * FROM group_messages WHERE group_id=?", (group_id,))
+            messages = cursor.fetchall()
+            for message in messages:
+                client_socket.sendall(f'From: {message[2]}\nMessage: {message[3]}\n'.encode())
+                
+        else:
+            client_socket.sendall(b'Invalid command.')
+
+    client_socket.close()
+
+# Accept incoming connections
+while True:
+    client_socket, addr = server_socket.accept()
+    print('Got connection from', addr)
+    handle_client(client_socket)
+    client_socket.close()
+
+# Close the database connection
+conn.close()
