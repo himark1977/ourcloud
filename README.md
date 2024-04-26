@@ -4,13 +4,10 @@ iCloud but for Linux.
 
 For all of the features you will need server being open.
 
-But the hearth is right there.
-
 *Disclaimer:* This is not the Apple iCloud that is working on linux, this is an open source interpretation of a service cloud, let's say it iCloud.
 Please be careful this is highly broken.
 Nothing is encrypted (yet) use on your own.
 This app, now, is mostly for demonstration purpose.
-
 
 Master branch: app using Builder-IDE (Gnome App).
 Inazaki branch: app using kirigami (KDE App)
