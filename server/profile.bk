@@ -1,0 +1,111 @@
+<?php
+// Include server.php for database connection
+include 'server.php';
+
+// Start the session
+if (!isset($_SESSION['username'])) {
+    // Redirect to login page
+    header("Location: index.php");
+    exit;
+}
+
+// If logout request is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
+    // Unset all session variables
+    $_SESSION = array();
+
+    // Destroy the session
+    session_destroy();
+
+    // Redirect to login page
+    header("Location: index.php");
+    exit; // Ensure script stops execution after redirection
+}
+
+// If user is logged in, get username from session
+$username = $_SESSION['username'];
+
+// Function to send a message
+function sendMessage($conn, $sender, $recipient, $message) {
+    $insert_query = "INSERT INTO messages (sender, recipient, message) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($insert_query);
+    $stmt->bind_param("sss", $sender, $recipient, $message);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Function to retrieve messages for a user
+function getMessages($conn, $recipient) {
+    $messages = array();
+    $messages_query = "SELECT * FROM messages WHERE recipient = ?";
+    $stmt = $conn->prepare($messages_query);
+    $stmt->bind_param("s", $recipient);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $messages[] = $row;
+    }
+    $stmt->close();
+    return $messages;
+}
+
+// If the message form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
+    $sender = $_SESSION['username'];
+    $recipient = $_POST['recipient'];
+    $message = $_POST['message'];
+    // Send the message
+    sendMessage($conn, $sender, $recipient, $message);
+}
+
+// Retrieve messages for the current user
+$messages = getMessages($conn, $username);
+
+// Close the database connection
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <p>Welcome, <b><?php echo htmlspecialchars($username); ?></b></p>
+
+    <!-- Message form -->
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <input type="hidden" name="send_message">
+        <label for="recipient">Recipient:</label>
+        <input type="text" id="recipient" name="recipient" required><br>
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" required></textarea><br>
+        <label for="encrypt">Encrypt message:</label>
+        <input type="checkbox" id="encrypt" name="encrypt"><br>
+        <button type="submit">Send Message</button>
+    </form>
+
+    <!-- Display messages -->
+    <h2>Messages</h2>
+    <?php if (!empty($messages)) : ?>
+        <?php foreach ($messages as $msg) : ?>
+            <div>
+                <p><strong>From:</strong> <?php echo $msg['sender']; ?></p>
+                <p><?php echo $msg['message']; ?></p>
+            </div>
+            <hr>
+        <?php endforeach; ?>
+    <?php else : ?>
+        <p>No messages</p>
+    <?php endif; ?>
+
+    <!-- Logout form -->
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <input type="hidden" name="logout">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
