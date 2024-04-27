@@ -9,12 +9,6 @@ Please be careful this is highly broken.
 Nothing is encrypted (yet) use on your own.
 This app, now, is mostly for demonstration purpose.
 
-Master branch: app using Builder-IDE (Gnome App).
-Inazaki branch: app using kirigami (KDE App)
-Dante branch: app using qtcreator (Qt App).
-Miscellaneous branch: app using, for research, all king of technologies.
-
-
 ## Build
 1. Download Gnome Builder. [https://apps.gnome.org/ro/Builder/]
 2. Open the project.
@@ -28,7 +22,7 @@ $ ./server/server
 5. Open the app.
 
 ## Configure
-### Create subprojects
+### Create subprojects for blueprint
 
 ```
 mkdir -p subprojects 
@@ -113,8 +107,7 @@ ourcloud_sources = [
 </gresources>
 ```
 
-### Edit com.evokzh.ourcloud.json, add before meson
-pip config 
+### Pip config, edit com.evokzh.ourcloud.json, add before meson
 
 ```
  {
