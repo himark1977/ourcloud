@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/himark1977/ourcloud/assets/98144874/11f2fd10-d2db-46d2-919d-c68aca65114a" width="150" height="150" border="10"/>
+<img src="https://github.com/himark1977/ourcloud/blob/master/data/icons/hicolor/scalable/apps/svgviewer-png-output.png" width="150" height="150" border="10"/>
 </p>
 
 # ourcloud
