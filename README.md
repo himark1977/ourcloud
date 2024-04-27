@@ -1,16 +1,20 @@
+<p align="center">
+<img src="https://github.com/himark1977/ourcloud/assets/98144874/11f2fd10-d2db-46d2-919d-c68aca65114a" width="150" height="150" border="10"/>
+</p>
 # ourcloud
 
 iCloud but for Linux.
 
 For all of the features you will need server being open.
 
-*Disclaimer:* This is not the Apple iCloud that is working on linux, this is an open source interpretation of a service cloud, let's say it iCloud.
-Please be careful this is highly broken.
-Nothing is encrypted (yet) use on your own.
-This app, now, is mostly for demonstration purpose.
+> [!CAUTION]
+> *Disclaimer:* This is not the Apple iCloud that is working on linux, this is an open source interpretation of a service cloud, let's say it iCloud.
+> Please be careful this is highly broken.
+> Nothing is encrypted (yet) use on your own.
+> This app, now, is mostly for demonstration purpose.
 
 ## Build
-1. Download Gnome Builder. [https://apps.gnome.org/ro/Builder/]
+1. Download [Gnome Builder](https://apps.gnome.org/ro/Builder/).
 2. Open the project.
 3. Build.
 4. Open server file from server folder.
@@ -29,7 +33,7 @@ mkdir -p subprojects
 ```
 
 ### Config subprojects
-Blueprint config [https://jwestman.pages.gitlab.gnome.org/blueprint-compiler/setup.html]
+Blueprint [config](https://jwestman.pages.gitlab.gnome.org/blueprint-compiler/setup.html).
 
 ```
 cat <<EOT >> subprojects/blueprint-compiler.wrap
