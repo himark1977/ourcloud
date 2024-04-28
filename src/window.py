@@ -31,14 +31,25 @@ class OurcloudWindow(Adw.ApplicationWindow):
     entry_password = Gtk.Template.Child()
     login_button = Gtk.Template.Child()
     reg_button = Gtk.Template.Child()
-    menu_btn = Gtk.Template.Child()
+    messages_button = Gtk.Template.Child()
     main_desc_label = Gtk.Template.Child()
 
-    def __init__(self, send_message, **kwargs):
+    def __init__(self, send_message,is_connected_to_server, **kwargs):
+        from .main import OurcloudApplication  # Import OurcloudApplication here
         self.send_message = send_message
+        self.is_connected_to_server = is_connected_to_server
         super().__init__(**kwargs)
         self.login_button.connect("clicked", self.on_login_button_clicked)
         self.reg_button.connect("clicked", self.on_reg_button_clicked)
+        self.messages_button.connect("clicked", self.on_message_button_clicked)
+
+        if is_connected_to_server != True:
+            self.entry_password.hide()
+            self.entry_username.hide()
+            self.login_button.hide()
+            self.reg_button.hide()
+            self.main_hello_label.set_text('An error occured.')
+            self.main_desc_label.set_text('Failed to connect to the server. Connection refused.')
 
     # get username buffer and print on the console
     def on_login_button_clicked(self, button):
@@ -50,8 +61,13 @@ class OurcloudWindow(Adw.ApplicationWindow):
             self.entry_username.hide()
             self.login_button.hide()
             self.reg_button.hide()
-            self.menu_btn.show()
-            self.main_desc_label.set_text('Welcome to Ourcloud!\n Please select an option from the menu.')
+            self.main_desc_label.set_text('Welcome to Ourcloud!\n Please select an option from below.')
+            self.messages_button.show()
+
+    def on_message_button_clicked(self, button):
+        self.ourmessages = OurcloudMessages(send_message=self.send_message, username=self.username)
+        self.ourmessages.set_transient_for(self)
+        self.ourmessages.present()
 
     def on_reg_button_clicked(self, button):
         self.username = str(self.entry_username.get_text())

@@ -17,20 +17,61 @@
         </child>
         <property name="content">
           <object class="GtkBox">
-              <property name="orientation">vertical</property>
-              <property name="spacing">20</property>
-          
-              <child>
-                <object class="GtkLabel" id="hello_label">
-                  <property name="label">Hello, World!</property>
-                  <style>
-                    <class name="title-2"/>
-                  </style>
+            <child>
+              <object class="GtkBox">
+                  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+                  <property name="spacing">50</property>
+                  <child>
+                    <object class="GtkBox">
+                        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                        <property name="spacing">20</property>
+                          <child>
+                            <object class="GtkLabel" id="message_from">
+                              <property name="label">asd</property>
+                            </object>
+                          </child>
+                          <child>
+                            <object class="GtkLabel" id="message_label">
+                              <property name="label">This is a message</property>
+                            </object>
+                          </child>
+                          <child>
+                            <object class="GtkButton" id="readmessage_button">
+                              <property name="label">Refresh</property>
+                            </object>
+                          </child>
+                    </object>
+                  </child>
                 </object>
               </child>
-
+              <child>
+                <object class="GtkBox">
+                  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+                  <property name="spacing">20</property>
+                  <child>
+                    <object class="GtkBox">
+                            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                            <property name="spacing">10</property>
+                              <child>
+                                <object class="GtkEntry" id="entry_to">
+                                  <property name="placeholder-text">To:</property>
+                                </object>
+                              </child>
+                              <child>
+                                  <object class="GtkEntry" id="entry_message">
+                                  <property name="placeholder-text">Message</property>
+                                </object>
+                              </child>
+                              <child>
+                                <object class="GtkButton" id="send_message_button">
+                                  <property name="label">Send</property>
+                                </object>
+                              </child>
+                      </object>
+                  </child>
+                </object>
+              </child>
           </object>
-
         </property>
       </object>
     </property>

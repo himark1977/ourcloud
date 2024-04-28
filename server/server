@@ -43,6 +43,7 @@ conn.commit()
 def handle_client(client_socket):
     while True:
         data = client_socket.recv(1024).decode()
+        print('Received:', data)
         if not data:
             break
 
@@ -80,8 +81,11 @@ def handle_client(client_socket):
             username = payload
             cursor.execute("SELECT * FROM messages WHERE receiver=?", (username,))
             messages = cursor.fetchall()
-            for message in messages:
-                client_socket.sendall(f'From: {message[1]}\nMessage: {message[3]}\n'.encode())
+            if not messages:
+                client_socket.sendall(b'No messages.')
+            else:
+                for message in messages:
+                    client_socket.sendall(f'{message[1]}, {message[3]}'.encode())
 
         # Delete messages
         elif command == 'delete_messages':
@@ -121,8 +125,7 @@ def handle_client(client_socket):
             # Friends where user1 is the current user
             cursor.execute("SELECT * FROM friends WHERE user1=?", (username,))
             friends = cursor.fetchall()
-            for friend in friends:
-                client_socket.sendall(f'{friend[2]}\n'.encode())
+            client_socket.sendall(f'{friends}'.encode())
         
         # not working yet idk why
         # Create group
@@ -186,10 +189,12 @@ def handle_client(client_socket):
 
 # Accept incoming connections
 while True:
-    client_socket, addr = server_socket.accept()
-    print('Got connection from', addr)
-    handle_client(client_socket)
-    client_socket.close()
+    try:
+        client_socket, addr = server_socket.accept()
+        print('Got connection from', addr)
+        handle_client(client_socket)
+    except ConnectionResetError:
+        print('Connection reset by peer')
+    finally:
+        client_socket.close()
 
-# Close the database connection
-conn.close()

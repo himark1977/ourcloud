@@ -31,6 +31,7 @@ from .messages import OurcloudMessages
 
 
 class OurcloudApplication(Adw.Application):
+    is_connected_to_server = False
     """The main application singleton class."""
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,8 +40,15 @@ class OurcloudApplication(Adw.Application):
     server_ip = 'localhost'
     server_port = 12345
 
-    # Connect to the server
-    client_socket.connect((server_ip, server_port))
+    try:
+        client_socket.connect((server_ip, server_port))
+        print("Connection established.")
+        is_connected_to_server = True
+    except ConnectionRefusedError:
+        print("Failed to connect to the server. Connection refused.")
+        # Handle the connection error gracefully, e.g., display an error message to the user
+        client_socket.close()
+
 
     def __init__(self):
         super().__init__(application_id='com.evokzh.ourcloud',
@@ -48,7 +56,6 @@ class OurcloudApplication(Adw.Application):
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
-        self.create_action('messages', self.on_messages_action)
         
 
     def do_activate(self):
@@ -59,7 +66,7 @@ class OurcloudApplication(Adw.Application):
         """
         win = self.props.active_window
         if not win:
-            win = OurcloudWindow(application=self, send_message=self.send_message)
+            win = OurcloudWindow(application=self, send_message=self.send_message, is_connected_to_server=self.is_connected_to_server)
         win.present()
 
     def on_about_action(self, widget, _):
@@ -79,11 +86,6 @@ class OurcloudApplication(Adw.Application):
         print('app.preferences action activated')
         preferences = OurcloudPreferences(application=self)
         preferences.present()
-
-    def on_messages_action(self, widget, _):
-        """Callback for the app.messages action."""
-        messages = OurcloudMessages(application=self, send_message=self.send_message)
-        messages.present()
 
     def send_message(self, message):
         """Send a message to the server."""

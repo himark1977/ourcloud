@@ -25,6 +25,32 @@ import socket
 class OurcloudMessages(Adw.ApplicationWindow):
     __gtype_name__ = 'OurcloudMessages'
 
-    def __init__(self, send_message, **kwargs):
+    readmessage_button = Gtk.Template.Child()
+    message_label = Gtk.Template.Child()
+    message_from = Gtk.Template.Child()
+    entry_to = Gtk.Template.Child()
+    entry_message = Gtk.Template.Child()
+    send_message_button = Gtk.Template.Child()
+
+    def __init__(self, send_message, username, **kwargs):
+        self.username = username
         self.send_message = send_message
         super().__init__(**kwargs)
+
+        self.readmessage_button.connect("clicked", self.on_message_read_clicked)
+        self.send_message_button.connect("clicked", self.on_send_message_clicked)
+        
+    
+    def on_message_read_clicked(self, button):
+        # Messages are arrived from the server with username, message
+        self.data_message = self.send_message(f'read_messages:{self.username}')
+        for i in range(0, len(self.data_message.split(','))):
+            self.sender = self.data_message.split(',')[i].split(':')[0]
+            self.message = self.data_message.split(',')[i].split(':')[1]
+            print(f'Message from {self.sender}: {self.message}')
+        
+        
+    def on_send_message_clicked(self, button):
+        self.receiver = str(self.entry_to.get_text())
+        self.message = str(self.entry_message.get_text())
+        self.send_message(f'write_message:{self.username},{self.receiver},{self.message}')

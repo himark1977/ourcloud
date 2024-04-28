@@ -12,7 +12,7 @@
             <child type="end">
               <object class="GtkMenuButton" id="menu_btn">
                 <property name="primary">True</property>
-                <property name="visible">False</property>
+                <property name="visible">True</property>
                 <property name="icon-name">open-menu-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Menu</property>
                 <property name="menu-model">primary_menu</property>
@@ -81,10 +81,6 @@
   </template>
   <menu id="primary_menu">
     <section>
-      <item>
-        <attribute name="label" translatable="yes">_Messages</attribute>
-        <attribute name="action">app.messages</attribute>
-      </item>
       <item>
         <attribute name="label" translatable="yes">_Preferences</attribute>
         <attribute name="action">app.preferences</attribute>
